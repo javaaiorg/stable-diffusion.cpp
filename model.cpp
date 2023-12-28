@@ -14,6 +14,33 @@
 #include "ggml/ggml-backend.h"
 #include "ggml/ggml.h"
 
+
+
+#if defined(_MSC_VER)
+#include <Windows.h>
+// windows.h, naming conflict with micros: std::min, sdt::max, SDLogLevel::ERROR
+
+#undef ERROR
+static wchar_t* str2wstr(const char* str) {
+    size_t len    = strlen(str) + 1;
+    wchar_t* wstr = (wchar_t*)malloc(len * sizeof(wchar_t));
+    MultiByteToWideChar(CP_UTF8, 0, str, (int)(len * sizeof(char)), wstr,
+                        (int)len);
+    return wstr;
+};
+
+    //#include <stringapiset.h>
+    // donot only include stringapiset.h, C1189 #error: "No Target Architecture"
+
+#else  // defined(_MSC_VER)
+
+#endif  // defined(_MSC_VER)
+
+
+
+
+
+
 #define ST_HEADER_SIZE_LEN 8
 
 uint64_t read_u64(uint8_t* buffer) {
@@ -1203,7 +1230,17 @@ bool ModelLoader::load_tensors(on_new_tensor_cb_t on_new_tensor_cb) {
         std::string file_path = file_paths_[file_index];
         LOG_DEBUG("loading tensors from %s", file_path.c_str());
 
+
+#if defined(_MSC_VER)
+        const char * c_file_path = file_path.c_str();
+        const wchar_t * c_w_file_path = str2wstr(c_file_path);
+        std::ifstream file(c_w_file_path, std::ios::binary);
+        delete c_w_file_path;
+
+#else // defined(_MSC_VER)
         std::ifstream file(file_path, std::ios::binary);
+#endif // defined(_MSC_VER)
+
         if (!file.is_open()) {
             LOG_ERROR("failed to open '%s'", file_path.c_str());
             return false;
