@@ -1361,8 +1361,8 @@ struct FrozenCLIPEmbedderWithCustomWords {
 
     // context and memory buffers
     struct ggml_context* ctx;
-    ggml_backend_buffer_t params_buffer;
-    ggml_backend_buffer_t compute_buffer;  // for compute
+    ggml_backend_buffer_t params_buffer = NULL;
+    ggml_backend_buffer_t compute_buffer = NULL;  // for compute
     struct ggml_allocr* compute_alloc = NULL;
     size_t compute_memory_buffer_size = -1;
 
@@ -2283,8 +2283,8 @@ struct UNetModel {
     struct ggml_tensor* out_2_b;  // [out_channels, ]
 
     struct ggml_context* ctx;
-    ggml_backend_buffer_t params_buffer;
-    ggml_backend_buffer_t compute_buffer;  // for compute
+    ggml_backend_buffer_t params_buffer = NULL;
+    ggml_backend_buffer_t compute_buffer = NULL;  // for compute
     struct ggml_allocr* compute_alloc = NULL;
     size_t compute_memory_buffer_size = -1;
 
@@ -3513,8 +3513,8 @@ struct AutoEncoderKL {
     Decoder decoder;
 
     struct ggml_context* ctx;
-    ggml_backend_buffer_t params_buffer;
-    ggml_backend_buffer_t compute_buffer;  // for compute
+    ggml_backend_buffer_t params_buffer = NULL;
+    ggml_backend_buffer_t compute_buffer = NULL;  // for compute
     struct ggml_allocr* compute_alloc = NULL;
 
     int memory_buffer_size = 0;
@@ -4184,8 +4184,8 @@ struct TinyAutoEncoder {
 
     ggml_context* ctx;
     bool decode_only = false;
-    ggml_backend_buffer_t params_buffer;
-    ggml_backend_buffer_t compute_buffer;  // for compute
+    ggml_backend_buffer_t params_buffer = NULL;
+    ggml_backend_buffer_t compute_buffer = NULL;  // for compute
     struct ggml_allocr* compute_alloc = NULL;
 
     int memory_buffer_size = 0;
@@ -4623,8 +4623,8 @@ struct ESRGAN {
 
     ggml_context* ctx;
     bool decode_only = false;
-    ggml_backend_buffer_t params_buffer;
-    ggml_backend_buffer_t compute_buffer;  // for compute
+    ggml_backend_buffer_t params_buffer = NULL;
+    ggml_backend_buffer_t compute_buffer = NULL;  // for compute
     struct ggml_allocr* compute_alloc = NULL;
 
     int memory_buffer_size = 0;
