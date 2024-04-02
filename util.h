@@ -32,6 +32,9 @@ enum SDLogLevel {
 };
 
 void set_sd_log_level(SDLogLevel level);
+typedef void (*LOG_CALLBACK)(SDLogLevel level, const char* file, int line, const char* format, va_list args);
+static LOG_CALLBACK log_callback = NULL;
+void set_sd_log_callback(LOG_CALLBACK);
 
 void log_printf(SDLogLevel level, const char* file, int line, const char* format, ...);
 

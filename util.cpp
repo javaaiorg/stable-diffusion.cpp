@@ -170,34 +170,56 @@ void set_sd_log_level(SDLogLevel level) {
     log_level = level;
 }
 
+
+void set_sd_log_callback(LOG_CALLBACK lcb) {
+    log_callback = lcb;
+}
+
+
 void log_printf(SDLogLevel level, const char* file, int line, const char* format, ...) {
-    if (level < log_level) {
-        return;
-    }
-    va_list args;
-    va_start(args, format);
+    
+    
+    LOG_CALLBACK callback_temp = log_callback;
+    if (callback_temp != NULL) {
 
-    if (level == SDLogLevel::DEBUG) {
-        printf("[DEBUG] %s:%-4d - ", basename(file).c_str(), line);
-        vprintf(format, args);
-        printf("\n");
-        fflush(stdout);
-    } else if (level == SDLogLevel::INFO) {
-        printf("[INFO]  %s:%-4d - ", basename(file).c_str(), line);
-        vprintf(format, args);
-        printf("\n");
-        fflush(stdout);
-    } else if (level == SDLogLevel::WARN) {
-        fprintf(stdout, "[WARN]  %s:%-4d - ", basename(file).c_str(), line);
-        vfprintf(stdout, format, args);
-        fprintf(stdout, "\n");
-        fflush(stdout);
+        va_list args_temp;
+        va_start(args_temp, format);
+        callback_temp(level, file, line, format, args_temp);
+        va_end(args_temp);
+
     } else {
-        fprintf(stderr, "[ERROR] %s:%-4d - ", basename(file).c_str(), line);
-        vfprintf(stderr, format, args);
-        fprintf(stderr, "\n");
-        fflush(stderr);
+        if (level < log_level) {
+            return;
+        }
+        va_list args;
+        va_start(args, format);
+
+
+        if (level == SDLogLevel::DEBUG) {
+            printf("[DEBUG] %s:%-4d - ", basename(file).c_str(), line);
+            vprintf(format, args);
+            printf("\n");
+            fflush(stdout);
+        } else if (level == SDLogLevel::INFO) {
+            printf("[INFO]  %s:%-4d - ", basename(file).c_str(), line);
+            vprintf(format, args);
+            printf("\n");
+            fflush(stdout);
+        } else if (level == SDLogLevel::WARN) {
+            fprintf(stdout, "[WARN]  %s:%-4d - ", basename(file).c_str(), line);
+            vfprintf(stdout, format, args);
+            fprintf(stdout, "\n");
+            fflush(stdout);
+        } else {
+            fprintf(stderr, "[ERROR] %s:%-4d - ", basename(file).c_str(), line);
+            vfprintf(stderr, format, args);
+            fprintf(stderr, "\n");
+            fflush(stderr);
+        }
+
+        va_end(args);
     }
 
-    va_end(args);
+    
+
 }
